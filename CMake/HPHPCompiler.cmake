@@ -52,7 +52,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     endif()
     # 5.1 enables C++11 std::string and std::list by default, disable them
     if(GCC_VERSION VERSION_GREATER 5.1 OR GCC_VERSION VERSION_EQUAL 5.1)
-      set(GNUCC_OPT "${GNUCC_OPT} -D_GLIBCXX_USE_CXX11_ABI=0 -Wno-bool-compare")
+      set(GNUCC_OPT "${GNUCC_OPT} -D_GLIBCXX_USE_CXX11_ABI=0")
+      if(GCC_VERSION VERSION_LESS 5.2)
+        # workaround for gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65882
+        set(GNUCC_OPT "${GNUCC_OPT} -Wno-bool-compare")
+      endif()
     endif()
   else()
      message(FATAL_ERROR "${PROJECT_NAME} requires g++ 4.8 or greater.")
